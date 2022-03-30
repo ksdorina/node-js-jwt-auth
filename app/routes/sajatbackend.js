@@ -19,7 +19,52 @@ module.exports = function(app) {
     res.send('Hello World!')
   })
   
+  app.get('/jotulaj', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'zarodoga_adatb'
+    })
+    
+    connection.connect()
+    
+    connection.query('SELECT * from jo_tulaj', function (err, rows, fields) {
+      if (err) throw err
+    
+      console.log(rows)
+      res.send(rows)
+    })
+    
+    connection.end()
+    
   
+  })
+
+
+  app.get('/rossztulaj', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'zarodoga_adatb'
+    })
+    
+    connection.connect()
+    
+    connection.query('SELECT * from rossz_tulaj', function (err, rows, fields) {
+      if (err) throw err
+    
+      console.log(rows)
+      res.send(rows)
+    })
+    
+    connection.end()
+    
+  
+  })
   
   app.get('/mostani', (req, res) => {
     var mysql = require('mysql')
@@ -33,6 +78,29 @@ module.exports = function(app) {
     connection.connect()
     
     connection.query('SELECT * from elmenyek ORDER BY elmenyek.datum DESC, elmenyek.elmeny_id DESC', function (err, rows, fields) {
+      if (err) throw err
+    
+      console.log(rows)
+      res.send(rows)
+    })
+    
+    connection.end()
+    
+  
+  })
+
+  app.get('/felhasznalok', (req, res) => {
+    var mysql = require('mysql')
+    var connection = mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password: '',
+      database: 'zarodoga_adatb'
+    })
+    
+    connection.connect()
+    
+    connection.query('SELECT * from users', function (err, rows, fields) {
       if (err) throw err
     
       console.log(rows)
@@ -90,8 +158,8 @@ module.exports = function(app) {
       
     
     })
-  
-    app.post('/szemadatfelvitel', (req, res) => {
+
+    app.get('/emlek_lekerd', (req, res) => {
       var mysql = require('mysql')
       var connection = mysql.createConnection({
         host: 'localhost',
@@ -101,42 +169,20 @@ module.exports = function(app) {
       })
       
       connection.connect()
-      let dt=new Date();
-      connection.query("INSERT INTO szemelyek VALUES (NULL, '"+req.body.beviteld+"', '', '"+req.body.bevitel1+"', '', '"+req.body.bevitel2+"','"+req.body.bevitel3+"', '')", function (err, rows, fields) {
+      
+      connection.query('SELECT * from emlekek', function (err, rows, fields) {
         if (err) throw err
       
-        console.log("Sikeres felvitel!")
-        res.send("Sikeres felvitel!")
+        console.log(rows)
+        res.send(rows)
       })
       
       connection.end()
       
-  
+    
     })
-  
-    app.post('/kedvelemfelvitel', (req, res) => {
-      var mysql = require('mysql')
-      var connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'zarodoga_adatb'
-      })
-      
-      connection.connect()
-      let dt=new Date();
-      connection.query("INSERT INTO kedvelem VALUES (NULL, '"+req.body.bevitel1+"', '"+req.body.bevitel2+"', '"+req.body.bevitel3+"', '"+req.body.bevitel4+"','"+req.body.bevitel5+"', '"+req.body.bevitel6+"', '"+req.body.bevitel7+"','"+req.body.bevitel8+"')", function (err, rows, fields) {
-        if (err) throw err
-      
-        console.log("Sikeres felvitel!")
-        res.send("Sikeres felvitel!")
-      })
-      
-      connection.end()
-      
-  
-    })
-  
+
+
 
     app.post('/torles', (req, res) => {
       var mysql = require('mysql')
@@ -183,7 +229,54 @@ module.exports = function(app) {
   
     })
 
-    app.post('/elmenyfelvitel', (req, res) => {
+    app.post('/kereses_felh', (req, res) => {
+      var mysql = require('mysql')
+      var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'zarodoga_adatb'
+      })
+      
+      connection.connect()
+      let sz="SELECT * FROM users WHERE username LIKE '%"+req.body.bevitel1+"%'"
+      connection.query(sz, function (err, rows, fields) {
+        if (err) throw err
+      
+        res.send(rows)
+      })
+      
+      connection.end()
+      
+  
+    })
+
+
+    app.post('/kereses_emlek', (req, res) => {
+      var mysql = require('mysql')
+      var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'zarodoga_adatb'
+      })
+      
+      connection.connect()
+      let sz="SELECT * FROM emlekek WHERE szoveg LIKE '%"+req.body.bevitel1+"%'"
+      connection.query(sz, function (err, rows, fields) {
+        if (err) throw err
+      
+        res.send(rows)
+      })
+      
+      connection.end()
+      
+  
+    })
+
+
+    
+    app.post('/torles_felh', (req, res) => {
       var mysql = require('mysql')
       var connection = mysql.createConnection({
         host: 'localhost',
@@ -194,18 +287,42 @@ module.exports = function(app) {
       
       connection.connect()
       let dt=new Date();
-      let teljesdat=dt.getFullYear()+"-"+(dt.getMonth()+1)+"-"+(dt.getDate()+1);
-      connection.query("INSERT INTO elmenyek VALUES (NULL, '"+teljesdat+"', '"+req.body.bevitel1+"', '"+req.body.bevitel2+"')", function (err, rows, fields) {
+      connection.query("DELETE FROM users WHERE id ="+req.body.bevitel1+"", function (err, rows, fields) {
         if (err) throw err
       
-        console.log("Sikeres felvitel!")
-        res.send("Sikeres felvitel!")
+        console.log("Sikeres törlés!")
+        res.send("Sikeres törlés!")
+      })
+      
+      connection.end()
+
+    })
+
+
+    app.post('/torles_emlek', (req, res) => {
+      var mysql = require('mysql')
+      var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'zarodoga_adatb'
+      })
+      
+      connection.connect()
+      let dt=new Date();
+      connection.query("DELETE FROM emlekek WHERE gyerekkori_id ="+req.body.bevitel1+"", function (err, rows, fields) {
+        if (err) throw err
+      
+        console.log("Sikeres törlés!")
+        res.send("Sikeres törlés!")
       })
       
       connection.end()
       
   
     })
+      
+  
 
     app.use(fileupload());
   app.post("/upload", (req, res) => {
