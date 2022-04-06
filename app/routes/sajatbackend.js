@@ -321,6 +321,32 @@ module.exports = function(app) {
       
   
     })
+
+
+    app.post('/jogadas', (req, res) => {
+      var mysql = require('mysql')
+      var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'zarodoga_adatb'
+      })
+      
+      connection.connect()
+      let dt=new Date();
+      connection.query("UPDATE user_roles SET roleId = 3 WHERE user_roles.userId = "+req.body.bevitel1+"", function (err, rows, fields) {
+        if (err) throw err
+      
+        console.log("Sikeres változtatás!")
+        res.send("Sikeres változatás!")
+      })
+      
+      connection.end()
+      
+  
+    })
+
+    
       
   
 
